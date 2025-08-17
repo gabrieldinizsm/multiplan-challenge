@@ -39,7 +39,7 @@ def md5_hash(s: str) -> str:
 
 def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
 
-    df_daily = (
+    return (
         df.with_columns(
             pl.col("httpTimestamp").dt.truncate("1d").cast(pl.Date).alias("date")  
         )
@@ -47,8 +47,6 @@ def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
         .agg(pl.len().alias("count"))
         .sort("count", descending=True) 
     )
-
-    return df_daily
 
 def get_last_request_date_by_ip (df: pl.DataFrame) -> pl.DataFrame:
 
