@@ -55,6 +55,11 @@ def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
 
     return df_daily
 
+def get_last_request_date_by_ip (df: pl.DataFrame) -> pl.DataFrame:
+
+    df_sorted = df.sort("httpTimestamp", descending=True).unique(subset="remoteHost", keep="first").select(pl.col('remoteHost', 'httpTimestamp'))
+    return df_sorted
+
 def main () -> None:
 
     parsed_rows = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
@@ -89,6 +94,9 @@ def main () -> None:
 
     df_daily.write_csv(os.path.join('output/', 'total-requests-by-day.csv'))
 
-  
+    df_unique_ip_last_request = get_last_request_date_by_ip(df)
+
+    df_unique_ip_last_request.write_csv(os.path.join('output/', 'unique-ips-by-last-request.csv'))
+
 if __name__ == '__main__':
     main()
