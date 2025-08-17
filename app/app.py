@@ -88,9 +88,7 @@ def main () -> None:
 
     df_unique_ip_last_request = get_last_request_date_by_ip(df)
 
-    print(df_unique_ip_last_request)
-
-    #df_unique_ip_last_request.write_csv(os.path.join('output/', 'unique-ips-by-last-request.csv'))
+    df_unique_ip_last_request.write_csv(os.path.join('output/', 'unique-ips-by-last-request.csv'))
 
 if __name__ == '__main__':
     main()
