@@ -6,7 +6,7 @@ import hashlib
 def parse_log_file(file_path: str) -> list:
 
     log_pattern = re.compile(
-        r'(?P<remoteHost>\S+) '             
+        r'(?P<remoteHost>[0-9.]+) '             
         r'(?P<userIdentity>\S+) '
         r'(?P<authUser>\S+) ' 
         r'\[(?P<httpTimestamp>[^\]]+)\] ' 
