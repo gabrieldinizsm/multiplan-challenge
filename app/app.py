@@ -35,7 +35,7 @@ def filter_top10_df_by_response_time(df: pl.DataFrame, target_referrer: str, top
     )
 
 def md5_hash(s: str) -> str:
-    return hashlib.md5().hexdigest()
+    return hashlib.md5(s.encode('utf-8')).hexdigest()
 
 def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
 
