@@ -59,6 +59,21 @@ def main () -> None:
         pl.col("userAgent").cast(pl.Utf8),
     )
 
+    df.write_json(os.path.join('output/', 'test-acess-001-1.json'))
+
+    top10_df = filter_top10_df_by_response_time(df)
+
+    top10_df.write_json(os.path.join('output/', 'top10_requests_by_response_time.json'))
+
+    df = df.with_columns(
+        pl.col('httpTimestamp').dt.strftime('%Y-%m-%d %H:%M:%S').alias('httpTimestampUnixStyle'), 
+        pl.col('remoteHost').map_elements(md5_hash, return_dtype=str).alias('remoteHostMd5Hashed')
+    )   
+
+    print(df.head(10))
+
+    df.write_csv(os.path.join('output/', 'test-access-hashed.txt'))
+
   
 if __name__ == '__main__':
     main()
