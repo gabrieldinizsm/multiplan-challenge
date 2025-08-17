@@ -9,7 +9,7 @@ def parse_log_file(file_path: str) -> list:
         r'(?P<userIdentity>\S+) '
         r'(?P<authUser>\S+) ' 
         r'\[(?P<httpTimestamp>[^\]]+)\] ' 
-        r'"(?P<request>\S+) (?P<path>\S+) (?P<protocol>\S+)" '  
+        r'"(?P<request>[^"]+)" '  
         r'(?P<statusCode>\d{3}) '        
         r'(?P<responseTime>\S+) '            
         r'"(?P<referrerHeader>[^"]*)" '  
