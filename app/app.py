@@ -42,6 +42,19 @@ def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
 def md5_hash(s: str) -> str:
     return hashlib.md5().hexdigest()
 
+def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
+
+    df_daily = (
+        df.with_columns(
+            pl.col("httpTimestamp").dt.truncate("1d").cast(pl.Date).alias("date")  
+        )
+        .group_by("date")
+        .agg(pl.len().alias("count"))
+        .sort("count", descending=True) 
+    )
+
+    return df_daily
+
 def main () -> None:
 
     parsed_rows = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
@@ -71,6 +84,10 @@ def main () -> None:
     )   
 
     df.write_csv(os.path.join('output/', 'test-access-hashed.txt'))
+
+    df_daily = aggregate_dataframe_by_requests_per_day(df)
+
+    df_daily.write_csv(os.path.join('output/', 'total-requests-by-day.csv'))
 
   
 if __name__ == '__main__':
