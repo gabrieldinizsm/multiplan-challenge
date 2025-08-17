@@ -3,7 +3,7 @@ import re
 import os
 import hashlib
 
-def parse_log_file(file_path: str) -> list:
+def parse_log_file(file_path: str) -> pl.DataFrame:
 
     log_pattern = re.compile(
         r'(?P<remoteHost>[0-9.]+) '             
@@ -27,17 +27,12 @@ def parse_log_file(file_path: str) -> list:
     return pl.DataFrame(parsed_rows)
 
 
-def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
-
-    target_referrer = "http://localhost/svnview?repos=devel&rev=latest&root=SVNview/tmpl&list_revs=1"
-
-    top10 = (
+def filter_top10_df_by_response_time(df: pl.DataFrame, target_referrer: str, top_n: int = 10) -> pl.DataFrame:
+    return (
         df.filter(pl.col("referrerHeader") == target_referrer)  
         .sort("responseTime", descending=True)                    
-        .head(10)                                    
+        .head(top_n)                                    
     )
-
-    return top10
 
 def md5_hash(s: str) -> str:
     return hashlib.md5().hexdigest()
@@ -77,8 +72,10 @@ def main () -> None:
     )
 
     df.write_json(os.path.join('output/', 'test-acess-001-1.json'))
+    
+    target_referrer = "http://localhost/svnview?repos=devel&rev=latest&root=SVNview/tmpl&list_revs=1"
 
-    top10_df = filter_top10_df_by_response_time(df)
+    top10_df = filter_top10_df_by_response_time(df, target_referrer)
 
     top10_df.write_json(os.path.join('output/', 'top10_requests_by_response_time.json'))
 
