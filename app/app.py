@@ -25,6 +25,20 @@ def parse_log_file(file_path: str) -> list:
                 parsed_rows.append(match.groupdict())
     return parsed_rows
 
+
+def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
+
+    target_referrer = "http://localhost/svnview?repos=devel&rev=latest&root=SVNview/tmpl&list_revs=1"
+
+    top10 = (
+        df.filter(pl.col("referrerHeader") == target_referrer)  
+        .sort("responseTime", descending=True)                    
+        .head(10)                                    
+    )
+
+    return top10
+
+
 def main () -> None:
 
     parsed_rows = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
@@ -44,5 +58,10 @@ def main () -> None:
 
     df.write_json(os.path.join('output/', 'test-acess-001-1.json'))
 
+    top10_df = filter_top10_df_by_response_time(df)
+
+    top10_df.write_json(os.path.join('output/', 'top10_requests_by_response_time.json'))
+
+  
 if __name__ == '__main__':
     main()
