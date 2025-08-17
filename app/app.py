@@ -40,7 +40,7 @@ def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
     return top10
 
 def md5_hash(s: str) -> str:
-    return hashlib.md5(s.encode('utf-8')).hexdigest()
+    return hashlib.md5().hexdigest()
 
 def main () -> None:
 
@@ -69,8 +69,6 @@ def main () -> None:
         pl.col('httpTimestamp').dt.strftime('%Y-%m-%d %H:%M:%S').alias('httpTimestampUnixStyle'), 
         pl.col('remoteHost').map_elements(md5_hash, return_dtype=str).alias('remoteHostMd5Hashed')
     )   
-
-    print(df.head(10))
 
     df.write_csv(os.path.join('output/', 'test-access-hashed.txt'))
 
