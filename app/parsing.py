@@ -15,6 +15,16 @@ LOG_PATTERN = re.compile(
 )
 
 def parse_log_file(file_path: Path) -> pl.DataFrame:
+    """
+    Realiza o parsing do arquivo de log retornando como um Polars DataFrame.
+
+    Args:
+        file_path (Path): Path para o arquivo de log.
+
+    Returns:
+        pl.DataFrame: DataFrame contendo os dados de log.
+    """
+
     rows = []
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
@@ -26,6 +36,16 @@ def parse_log_file(file_path: Path) -> pl.DataFrame:
 
 
 def cast_log_dataframe(df: pl.DataFrame) -> pl.DataFrame:
+    """
+    Realiza o casting das colunas do DataFrame.
+
+    Args:
+        df (pl.DataFrame): DataFrame com os dados de logs.
+
+    Returns:
+        pl.DataFrame: DataFrame com colunas já tipadas.
+    """
+
     return df.with_columns(
         pl.col("remoteHost").cast(pl.Utf8),
         pl.col("userIdentity").cast(pl.Utf8),
