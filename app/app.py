@@ -30,5 +30,17 @@ def main () -> None:
     parsed_rows = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
     df = pl.DataFrame(parsed_rows)
 
+    df = df.with_columns(
+        pl.col("remoteHost").cast(pl.Utf8),
+        pl.col("userIdentity").cast(pl.Utf8),
+        pl.col("authUser").cast(pl.Utf8),
+        pl.col("httpTimestamp").str.strptime(pl.Datetime, "%d/%b/%Y %H:%M:%S %z", strict=False),
+        pl.col("request").cast(pl.Utf8),
+        pl.col("statusCode").cast(pl.Int16),
+        pl.col("responseTime").cast(pl.Int32, strict=False),
+        pl.col("referrerHeader").cast(pl.Utf8),
+        pl.col("userAgent").cast(pl.Utf8),
+    )
+
 if __name__ == '__main__':
     main()
