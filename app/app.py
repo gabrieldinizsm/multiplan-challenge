@@ -24,7 +24,7 @@ def parse_log_file(file_path: str) -> list:
             match = log_pattern.match(line)
             if match:
                 parsed_rows.append(match.groupdict())
-    return parsed_rows
+    return pl.DataFrame(parsed_rows)
 
 
 def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
@@ -62,8 +62,7 @@ def get_last_request_date_by_ip (df: pl.DataFrame) -> pl.DataFrame:
 
 def main () -> None:
 
-    parsed_rows = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
-    df = pl.DataFrame(parsed_rows)
+    df = parse_log_file(os.path.join('data/', 'test-access-001-1.log'))
 
     df = df.with_columns(
         pl.col("remoteHost").cast(pl.Utf8),
