@@ -49,9 +49,7 @@ def aggregate_dataframe_by_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 def get_last_request_date_by_ip (df: pl.DataFrame) -> pl.DataFrame:
-
-    df_sorted = df.sort("httpTimestamp", descending=True).unique(subset="remoteHost", keep="first").select(pl.col('remoteHost', 'httpTimestamp'))
-    return df_sorted
+    return df.group_by("remoteHost").agg(pl.max("httpTimestamp").alias("lastRequest"))
 
 def main () -> None:
 
@@ -90,7 +88,9 @@ def main () -> None:
 
     df_unique_ip_last_request = get_last_request_date_by_ip(df)
 
-    df_unique_ip_last_request.write_csv(os.path.join('output/', 'unique-ips-by-last-request.csv'))
+    print(df_unique_ip_last_request)
+
+    #df_unique_ip_last_request.write_csv(os.path.join('output/', 'unique-ips-by-last-request.csv'))
 
 if __name__ == '__main__':
     main()
