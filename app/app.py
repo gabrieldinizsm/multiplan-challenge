@@ -1,6 +1,7 @@
 import polars as pl
 import re
 import os
+import hashlib
 
 def parse_log_file(file_path: str) -> list:
 
@@ -38,6 +39,8 @@ def filter_top10_df_by_response_time(df: pl.DataFrame) -> pl.DataFrame:
 
     return top10
 
+def md5_hash(s: str) -> str:
+    return hashlib.md5(s.encode('utf-8')).hexdigest()
 
 def main () -> None:
 
@@ -48,19 +51,13 @@ def main () -> None:
         pl.col("remoteHost").cast(pl.Utf8),
         pl.col("userIdentity").cast(pl.Utf8),
         pl.col("authUser").cast(pl.Utf8),
-        pl.col("httpTimestamp").str.strptime(pl.Datetime, '%d/%b/%Y %H:%M:%S %z', strict=False),
+        pl.col("httpTimestamp").str.strptime(pl.Datetime, '%d/%b/%Y %H:%M:%S %z'),
         pl.col("request").cast(pl.Utf8),
         pl.col("statusCode").cast(pl.Int16),
         pl.col("responseTime").cast(pl.Int32, strict=False),
         pl.col("referrerHeader").cast(pl.Utf8),
         pl.col("userAgent").cast(pl.Utf8),
     )
-
-    df.write_json(os.path.join('output/', 'test-acess-001-1.json'))
-
-    top10_df = filter_top10_df_by_response_time(df)
-
-    top10_df.write_json(os.path.join('output/', 'top10_requests_by_response_time.json'))
 
   
 if __name__ == '__main__':
