@@ -34,3 +34,14 @@ def test_test_write_dataframe_output_json(tmp_path):
 
     assert file_path.exists()
     assert data == expected
+
+
+def test_write_dataframe_output_raises_value_error(tmp_path):
+    df = pl.DataFrame({
+        "col1": [1, 2],
+        "col2": ["a", "b"]
+    })
+    path = tmp_path / "output"
+
+    with pytest.raises(ValueError):
+        io_utils.write_dataframe_output(df, path, format="xml")
