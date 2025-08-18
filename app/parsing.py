@@ -1,5 +1,8 @@
-from pathlib import Path
+from __future__ import annotations
+
 import re
+from pathlib import Path
+
 import polars as pl
 
 LOG_PATTERN = re.compile(
@@ -13,6 +16,7 @@ LOG_PATTERN = re.compile(
     r'"(?P<referrerHeader>[^"]*)" '
     r'"(?P<userAgent>[^"]*)"'
 )
+
 
 def parse_log_file(file_path: Path) -> pl.DataFrame:
     """
@@ -47,13 +51,13 @@ def cast_log_dataframe(df: pl.DataFrame) -> pl.DataFrame:
     """
 
     return df.with_columns(
-        pl.col("remoteHost").cast(pl.Utf8),
-        pl.col("userIdentity").cast(pl.Utf8),
-        pl.col("authUser").cast(pl.Utf8),
-        pl.col("httpTimestamp").str.strptime(pl.Datetime, "%d/%b/%Y %H:%M:%S %z"),
-        pl.col("request").cast(pl.Utf8),
-        pl.col("statusCode").cast(pl.Int16),
-        pl.col("responseTime").cast(pl.Int32, strict=False),
-        pl.col("referrerHeader").cast(pl.Utf8),
-        pl.col("userAgent").cast(pl.Utf8),
+        pl.col('remoteHost').cast(pl.Utf8),
+        pl.col('userIdentity').cast(pl.Utf8),
+        pl.col('authUser').cast(pl.Utf8),
+        pl.col('httpTimestamp').str.strptime(pl.Datetime, '%d/%b/%Y %H:%M:%S %z'),
+        pl.col('request').cast(pl.Utf8),
+        pl.col('statusCode').cast(pl.Int16),
+        pl.col('responseTime').cast(pl.Int32, strict=False),
+        pl.col('referrerHeader').cast(pl.Utf8),
+        pl.col('userAgent').cast(pl.Utf8),
     )

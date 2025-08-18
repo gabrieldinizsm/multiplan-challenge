@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from pathlib import Path
+
 import polars as pl
+
 
 def ensure_output_dir_exists(path: Path) -> None:
     """
@@ -11,7 +15,10 @@ def ensure_output_dir_exists(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
-def write_dataframe_output(df: pl.DataFrame, path: Path, format: str = "json") -> None:
+def write_dataframe_output(
+        df: pl.DataFrame,
+        path: Path,
+        format: str = 'json') -> None:
     """
     Escreve o DataFrame para o path desejado no formato desejado.
 
@@ -20,11 +27,11 @@ def write_dataframe_output(df: pl.DataFrame, path: Path, format: str = "json") -
         path (Path): Path do local e nome a ser salvo.
         format (str): Formato do arquivo, um dos três (csv, json e parquet).
     """
-    if format == "csv":
+    if format == 'csv':
         df.write_csv(path)
-    elif format == "json":
+    elif format == 'json':
         df.write_json(path)
-    elif format == "parquet":
+    elif format == 'parquet':
         df.write_parquet(path)
     else:
-        raise ValueError(f"Formato não suportado: {format}")
+        raise ValueError(f'Formato não suportado: {format}')

@@ -1,33 +1,55 @@
-import polars as pl
-import app.transformation as tf
-from datetime import datetime
+from __future__ import annotations
+
 import hashlib
+from datetime import datetime
+
+import polars as pl
+
+import app.transformation as tf
+
 
 def test_filter_top_n_by_response_time():
-    target_referrer = "http://xpto.com"
+    target_referrer = 'http://xpto.com'
 
     data = {
-        "request": ["GET /manual/page1", "GET /manual/page2", "POST /manual/page3", "GET /other/page"],
-        "statusCode": [200, 200, 400, 200],
-        "referrerHeader": [target_referrer, target_referrer, target_referrer, target_referrer],
-        "responseTime": [100, 300, 200, 400]
-    }
+        'request': [
+            'GET /manual/page1',
+            'GET /manual/page2',
+            'POST /manual/page3',
+            'GET /other/page'],
+        'statusCode': [
+            200,
+            200,
+            400,
+            200],
+        'referrerHeader': [
+            target_referrer,
+            target_referrer,
+            target_referrer,
+            target_referrer],
+        'responseTime': [
+            100,
+            300,
+            200,
+            400]}
 
     df = pl.DataFrame(data)
 
-    top_df = tf.filter_top_n_by_response_time(df, target_referrer=target_referrer, top_n=2)
+    top_df = tf.filter_top_n_by_response_time(
+        df, target_referrer=target_referrer, top_n=2)
 
     assert top_df.shape[0] == 2
-    assert top_df["responseTime"].to_list() == [300, 100]  
+    assert top_df['responseTime'].to_list() == [300, 100]
 
-    assert all(top_df["request"].to_list()[i].startswith("GET /manual/") for i in range(top_df.shape[0]))
-    assert all(top_df["statusCode"] == 200)
-    assert all(top_df["referrerHeader"] == target_referrer)
+    assert all(top_df['request'].to_list()[i].startswith(
+        'GET /manual/') for i in range(top_df.shape[0]))
+    assert all(top_df['statusCode'] == 200)
+    assert all(top_df['referrerHeader'] == target_referrer)
 
 
 def test_aggregate_requests_per_day():
     df = pl.DataFrame({
-        "httpTimestamp": [
+        'httpTimestamp': [
             datetime(2025, 8, 17, 10, 0, 0),
             datetime(2025, 8, 17, 12, 0, 0),
             datetime(2025, 8, 18, 9, 0, 0)
@@ -37,15 +59,15 @@ def test_aggregate_requests_per_day():
     daily = tf.aggregate_requests_per_day(df)
 
     assert daily.shape[0] == 2
-    assert "count" in daily.columns
-    assert daily["count"].sum() == df.shape[0]
+    assert 'count' in daily.columns
+    assert daily['count'].sum() == df.shape[0]
 
 
 def test_get_last_request_by_ip():
     df = pl.DataFrame({
-        "remoteHost": ["1.1.1.1", "2.2.2.2", "1.1.1.1"],
-        "httpTimestamp": pl.Series(
-            ["2025-08-17 10:00:00", "2025-08-17 11:00:00", "2025-08-17 12:00:00"],
+        'remoteHost': ['1.1.1.1', '2.2.2.2', '1.1.1.1'],
+        'httpTimestamp': pl.Series(
+            ['2025-08-17 10:00:00', '2025-08-17 11:00:00', '2025-08-17 12:00:00'],
             dtype=pl.Datetime
         )
     })
@@ -57,21 +79,20 @@ def test_get_last_request_by_ip():
 
 
 def test_md5_hash():
-    s = "127.0.0.1"
+    s = '127.0.0.1'
     hashed = tf.md5_hash(s)
-    expected = hashlib.md5(s.encode("utf-8")).hexdigest()
+    expected = hashlib.md5(s.encode('utf-8')).hexdigest()
     assert hashed == expected
 
 
 def test_add_extra_columns():
     df = pl.DataFrame({
-        "remoteHost": ["127.0.0.1"],
-        "httpTimestamp": [datetime(2025, 8, 17, 10, 0, 0)]
+        'remoteHost': ['127.0.0.1'],
+        'httpTimestamp': [datetime(2025, 8, 17, 10, 0, 0)]
     })
 
     df_extra = tf.add_extra_columns(df)
 
-    assert "httpTimestampUnixStyle" in df_extra.columns
-    assert "remoteHostMd5Hashed" in df_extra.columns
-    assert df_extra["httpTimestampUnixStyle"][0] == "2025-08-17 10:00:00"
-
+    assert 'httpTimestampUnixStyle' in df_extra.columns
+    assert 'remoteHostMd5Hashed' in df_extra.columns
+    assert df_extra['httpTimestampUnixStyle'][0] == '2025-08-17 10:00:00'

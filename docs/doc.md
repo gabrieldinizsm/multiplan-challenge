@@ -30,8 +30,8 @@ multiplan-challenge/
 │── docs/                  # Documentações do projeto
 │── output/                # Arquivos de output gerados pelos scripts
 │── tests/                 # Testes Unitários
-│ │── test_parsing.py     
-│ │── test_transformation.py     
+│ │── test_parsing.py
+│ │── test_transformation.py
 │ │── test_io_utils.py
 │── requirements.txt       # Dependências do projeto
 │── .gitignore             # Arquivos a serem ignorados

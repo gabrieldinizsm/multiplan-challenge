@@ -1,10 +1,13 @@
-import polars as pl
+from __future__ import annotations
+
 import hashlib
+
+import polars as pl
 
 
 def filter_top_n_by_response_time(
-    df: pl.DataFrame, 
-    target_referrer: str, 
+    df: pl.DataFrame,
+    target_referrer: str,
     top_n: int = 10
 ) -> pl.DataFrame:
     """
@@ -12,7 +15,7 @@ def filter_top_n_by_response_time(
     as seguintes condições:
 
     request inicia com GET /manual/;
-    status code = 200 (sucesso); 
+    status code = 200 (sucesso);
     referrerHeade = target_referrer
 
     Args:
@@ -25,11 +28,11 @@ def filter_top_n_by_response_time(
     """
     return (
         df.filter(
-            pl.col("request").str.starts_with("GET /manual/"),
-            pl.col("statusCode") == 200,
-            pl.col("referrerHeader") == target_referrer,
+            pl.col('request').str.starts_with('GET /manual/'),
+            pl.col('statusCode') == 200,
+            pl.col('referrerHeader') == target_referrer,
         )
-        .sort("responseTime", descending=True)
+        .sort('responseTime', descending=True)
         .head(top_n)
     )
 
@@ -45,11 +48,13 @@ def aggregate_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
         pl.DataFrame: Um DataFrame agregado, contendo o total de requests por dia.
     """
     return (
-        df.with_columns(pl.col("httpTimestamp").dt.truncate("1d").cast(pl.Date).alias("date"))
-          .group_by("date")
-          .agg(pl.len().alias("count"))
-          .sort("count", descending=True)
-    )
+        df.with_columns(
+            pl.col('httpTimestamp').dt.truncate('1d').cast(
+                pl.Date).alias('date')) .group_by('date') .agg(
+            pl.len().alias('count')) .sort(
+                    'count',
+            descending=True))
+
 
 def get_last_request_by_ip(df: pl.DataFrame) -> pl.DataFrame:
     """
@@ -62,9 +67,10 @@ def get_last_request_by_ip(df: pl.DataFrame) -> pl.DataFrame:
         pl.DataFrame: DataFrame contendo listas de IP e suas respectivas últimas datas de requisição.
     """
     return (
-        df.group_by("remoteHost")
-          .agg(pl.max("httpTimestamp").alias("lastRequest"))
+        df.group_by('remoteHost')
+          .agg(pl.max('httpTimestamp').alias('lastRequest'))
     )
+
 
 def md5_hash(string: str) -> str:
     """
@@ -92,6 +98,6 @@ def add_extra_columns(df: pl.DataFrame) -> pl.DataFrame:
         pl.DataFrame: DataFrame com as colunas extras.
     """
     return df.with_columns([
-        pl.col("httpTimestamp").dt.strftime("%Y-%m-%d %H:%M:%S").alias("httpTimestampUnixStyle"),
-        pl.col("remoteHost").map_elements(md5_hash, return_dtype=str).alias("remoteHostMd5Hashed")
+        pl.col('httpTimestamp').dt.strftime('%Y-%m-%d %H:%M:%S').alias('httpTimestampUnixStyle'),
+        pl.col('remoteHost').map_elements(md5_hash, return_dtype=str).alias('remoteHostMd5Hashed')
     ])
