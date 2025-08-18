@@ -61,3 +61,17 @@ def test_md5_hash():
     hashed = tf.md5_hash(s)
     expected = hashlib.md5(s.encode("utf-8")).hexdigest()
     assert hashed == expected
+
+
+def test_add_extra_columns():
+    df = pl.DataFrame({
+        "remoteHost": ["127.0.0.1"],
+        "httpTimestamp": [datetime(2025, 8, 17, 10, 0, 0)]
+    })
+
+    df_extra = tf.add_extra_columns(df)
+
+    assert "httpTimestampUnixStyle" in df_extra.columns
+    assert "remoteHostMd5Hashed" in df_extra.columns
+    assert df_extra["httpTimestampUnixStyle"][0] == "2025-08-17 10:00:00"
+
