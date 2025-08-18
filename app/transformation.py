@@ -19,9 +19,12 @@ def filter_top_n_by_response_time(
         pl.DataFrame: DataFrame contendo as N linhas com maior responseTime de determinado referrer.
     """
     return (
-        df.filter(pl.col("referrerHeader") == target_referrer)
-          .sort("responseTime", descending=True)
-          .head(top_n)
+        df.filter(
+            pl.col("request").str.starts_with("GET /manual/"),
+            pl.col("referrerHeader") == target_referrer,
+        )
+        .sort("responseTime", descending=True)
+        .head(top_n)
     )
 
 
