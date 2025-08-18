@@ -1,10 +1,6 @@
 import polars as pl
 from pathlib import Path
 import app.parsing as parsing
-import sys 
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 def test_parse_log_file(tmp_path: Path):
     log_content = (
