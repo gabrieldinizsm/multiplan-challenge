@@ -21,21 +21,22 @@ Dessa forma, para cada questão será gerado um arquivo correspondente, seguindo
 ## 2. Organização do projeto
 ```
 multiplan-challenge/
-│── app/                   # Scripts com toda a lógica do projeto
-| │── parsing.py           # Camada de parsing e casting
-| │── transformation.py    # Camada de transformação de dados
-| │── io_utils.py          # Camada pra gerir o I/O
-| │── main.py              # Orquestração geral do pipeline
-│── data/                  # Arquivos de input
-│── docs/                  # Documentações do projeto
-│── output/                # Arquivos de output gerados pelos scripts
-│── tests/                 # Testes Unitários
+│── app/                     # Scripts com toda a lógica do projeto
+| │── parsing.py             # Camada de parsing e casting
+| │── transformation.py      # Camada de transformação de dados
+| │── io_utils.py            # Camada pra gerir o I/O
+| │── main.py                # Orquestração geral do pipeline
+│── data/                    # Arquivos de input
+│── docs/                    # Documentações do projeto
+│── output/                  # Arquivos de output gerados pelos scripts
+│── tests/                   # Testes Unitários
 │ │── test_parsing.py
 │ │── test_transformation.py
 │ │── test_io_utils.py
-│── requirements.txt       # Dependências do projeto
-│── .gitignore             # Arquivos a serem ignorados
-│── .python-version        # Versão do Python utilizada
+│── requirements.txt         # Dependências do projeto
+│── .gitignore               # Arquivos a serem ignorados
+│── .pre-commit-config.yaml  # Arquivo com configs do pre-commit
+│── .python-version          # Versão do Python utilizada
 ```
 
 ## 3. Como Executar o Projeto
