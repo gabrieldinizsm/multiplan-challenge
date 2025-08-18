@@ -23,6 +23,7 @@ def test_filter_top_n_by_response_time():
     assert all(top_df["statusCode"] == 200)
     assert all(top_df["referrerHeader"] == target_referrer)
 
+
 def test_aggregate_requests_per_day():
     df = pl.DataFrame({
         "httpTimestamp": [
@@ -37,3 +38,18 @@ def test_aggregate_requests_per_day():
     assert daily.shape[0] == 2
     assert "count" in daily.columns
     assert daily["count"].sum() == df.shape[0]
+
+
+def test_get_last_request_by_ip():
+    df = pl.DataFrame({
+        "remoteHost": ["1.1.1.1", "2.2.2.2", "1.1.1.1"],
+        "httpTimestamp": pl.Series(
+            ["2025-08-17 10:00:00", "2025-08-17 11:00:00", "2025-08-17 12:00:00"],
+            dtype=pl.Datetime
+        )
+    })
+
+    last_request = tf.get_last_request_by_ip(df)
+
+    assert last_request.shape[0] == 2
+    assert last_request.columns == ['remoteHost', 'lastRequest']
