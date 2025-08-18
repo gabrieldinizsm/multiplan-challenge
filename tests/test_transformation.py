@@ -1,6 +1,7 @@
 import polars as pl
 import app.transformation as tf
 from datetime import datetime
+import hashlib
 
 def test_filter_top_n_by_response_time():
     target_referrer = "http://xpto.com"
@@ -53,3 +54,10 @@ def test_get_last_request_by_ip():
 
     assert last_request.shape[0] == 2
     assert last_request.columns == ['remoteHost', 'lastRequest']
+
+
+def test_md5_hash():
+    s = "127.0.0.1"
+    hashed = tf.md5_hash(s)
+    expected = hashlib.md5(s.encode("utf-8")).hexdigest()
+    assert hashed == expected
