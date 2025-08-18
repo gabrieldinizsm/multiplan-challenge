@@ -47,7 +47,7 @@ def aggregate_requests_per_day(df: pl.DataFrame) -> pl.DataFrame:
     return (
         df.with_columns(pl.col("httpTimestamp").dt.truncate("1d").cast(pl.Date).alias("date"))
           .group_by("date")
-          .agg(pl.count().alias("count"))
+          .agg(pl.len().alias("count"))
           .sort("count", descending=True)
     )
 
