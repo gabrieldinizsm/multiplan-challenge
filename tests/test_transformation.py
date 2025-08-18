@@ -1,5 +1,6 @@
 import polars as pl
 import app.transformation as tf
+from datetime import datetime
 
 def test_filter_top_n_by_response_time():
     target_referrer = "http://xpto.com"
@@ -22,3 +23,17 @@ def test_filter_top_n_by_response_time():
     assert all(top_df["statusCode"] == 200)
     assert all(top_df["referrerHeader"] == target_referrer)
 
+def test_aggregate_requests_per_day():
+    df = pl.DataFrame({
+        "httpTimestamp": [
+            datetime(2025, 8, 17, 10, 0, 0),
+            datetime(2025, 8, 17, 12, 0, 0),
+            datetime(2025, 8, 18, 9, 0, 0)
+        ]
+    })
+
+    daily = tf.aggregate_requests_per_day(df)
+
+    assert daily.shape[0] == 2
+    assert "count" in daily.columns
+    assert daily["count"].sum() == df.shape[0]
