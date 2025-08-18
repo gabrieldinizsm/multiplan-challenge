@@ -8,7 +8,12 @@ def filter_top_n_by_response_time(
     top_n: int = 10
 ) -> pl.DataFrame:
     """
-    Realiza a filtragem das top N linhas, baseado no responseTime para um dado referrer.
+    Realiza a filtragem das top N linhas, com base no maior responseTime e
+    as seguintes condições:
+
+    request inicia com GET /manual/;
+    status code = 200 (sucesso); 
+    referrerHeade = target_referrer
 
     Args:
         df (pl.DataFrame): DataFrame de input a ser filtrado.
@@ -21,6 +26,7 @@ def filter_top_n_by_response_time(
     return (
         df.filter(
             pl.col("request").str.starts_with("GET /manual/"),
+            pl.col("statusCode") == 200,
             pl.col("referrerHeader") == target_referrer,
         )
         .sort("responseTime", descending=True)
